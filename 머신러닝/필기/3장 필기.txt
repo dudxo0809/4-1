@@ -149,6 +149,8 @@ p. 15, 16
 	-> 시그마는 covariance matrix (diagonal : 각 채널의 power, 나머지 : 채널간의 correlation)
 		-> 이 matrix는 symmetric matrix임 (대칭 행렬)
 
+Multivatiate Gaussian
+	-> 다변량의 데이터를 하나의 확률값으로 도출
 
 ---------------------------------------------------------------------
 p. 17
