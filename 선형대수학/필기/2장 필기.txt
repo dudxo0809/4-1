@@ -245,7 +245,9 @@ A=LU Factorization
 		-> L과 U라는 triangulat matrix로 분해
 		-> L은 lower, U는 upper triangulat matrix임
 	L은 multiplier로 이루어진 행렬
-		-> 
+		-> L은 결국 모든 Eliminationmatrix의 역행렬!
+		-> EA=U에서 A=E^-1U이므로
+			-> L=E^-1이다 !!!
 	U는
 		-> Elimination Matrix를 곱해 나온 행렬
 
@@ -261,7 +263,8 @@ p. 37
 	-> 여기서 b를 b=LC의 형태로 바꾸면??
 	-> LUx=Lc에서 => Ux=c 의 형태로 나타낼 수 있다!
 
-	-> L의 역행렬은 반드시 존재한다!
+	-> L의 역행렬은 반드시 존재한다! 
+		-> (elimination matrix들의 곱의 역행렬 이므로)
 	-> Ux=c에서 x는 매우 쉽게 구할 수 있다!
 
 
