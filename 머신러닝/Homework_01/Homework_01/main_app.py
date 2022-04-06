@@ -3,7 +3,10 @@
 import numpy as np
 import pandas as pd
 
-import util as util
+import sys
+print(sys.path)
+sys.path.append('C:/Users/ytkim/Desktop')
+import YTK as util
 
 """
 Please change "util" module name to your initial of name for scoring 

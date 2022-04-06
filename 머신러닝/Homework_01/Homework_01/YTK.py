@@ -13,9 +13,13 @@ def feature_normalization(data): # 10 points
     std = np.zeros([feature_num])
     
     # your code here
-
+    mu = np.mean(data, axis=0)
+    std = np.std(data, axis=0)
+    
+    normal_feature = (data-np.min(data, axis=0))/(np.max(data, axis=0) - np.min(data, axis=0))
+    #normal_feature = (data - mu) / std
     # end
-
+    
     return normal_feature
         
 def split_data(data, label, split_factor):
@@ -30,7 +34,8 @@ def get_normal_parameter(data, label, label_num): # 20 points
     sigma = np.zeros([label_num,feature_num])
 
     # your code here
-
+    print(data.shape)
+    print(label.shape)
     # end
     
     return mu, sigma
