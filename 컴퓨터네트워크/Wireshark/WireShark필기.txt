@@ -1,6 +1,0 @@
-DNS과제는 cmd와 wireshark모두씀
-HTTP는 wireshark만 사용
-
-문제 순서대로 풀것
-
-wireshark7.0 사용
