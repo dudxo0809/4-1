@@ -16,8 +16,9 @@ def feature_normalization(data): # 10 points
     mu = np.mean(data, axis=0)
     std = np.std(data, axis=0)
     
-    normal_feature = (data-np.min(data, axis=0))/(np.max(data, axis=0) - np.min(data, axis=0))
-    #normal_feature = (data - mu) / std
+    #normal_feature = (data-np.min(data, axis=0))/(np.max(data, axis=0) - np.min(data, axis=0))
+    normal_feature = (data - mu) / std
+    
     # end
     
     return normal_feature
@@ -34,8 +35,19 @@ def get_normal_parameter(data, label, label_num): # 20 points
     sigma = np.zeros([label_num,feature_num])
 
     # your code here
-    print(data.shape)
-    print(label.shape)
+    
+        
+    labeled_data = np.zeros([data.shape[0], label_num, feature_num])
+    
+    for i in range(0, data.shape[0]):
+        for k in range(0, feature_num):
+            _label = label[i]
+            labeled_data[i][_label][k] = data[i][k]
+    
+    mu = np.mean(labeled_data, axis=0)
+    sigma = np.std(labeled_data, axis=0)
+    #print(mu)
+    #print(sigma)
     # end
     
     return mu, sigma
@@ -48,6 +60,13 @@ def get_prior_probability(label, label_num): # 10 points
     prior = np.zeros([label_num])
     
     # your code here
+    
+    for i in range(0, data_point):
+        idx = label[i]
+        prior[idx] += 1;
+    
+    prior = prior/data_point
+    #print(prior)
 
     # end
     return prior
@@ -58,7 +77,11 @@ def Gaussian_PDF(x, mu, sigma): # 10 points
     pdf = 0
     
     # your code here
-
+    
+    var = float(sigma)**2
+    denom = (2*np.pi*var)**.5
+    num = np.exp(-(float(x)-float(mu))**2/(2*var))
+    pdf = num/denom
     # end
     
     return pdf
@@ -69,7 +92,11 @@ def Gaussian_Log_PDF(x, mu, sigma): # 10 points
     log_pdf = 0
     
     # your code here
-
+    
+    var = float(sigma)**2
+    denom = (2*np.pi*var)**.5
+    num = np.exp(-(float(x)-float(mu))**2/(2*var))
+    log_pdf = np.log(num/denom)
     # end
     
     return log_pdf
@@ -86,6 +113,20 @@ def Gaussian_NB(mu, sigma, prior, data): # 40 points
     
     # your code here
         ## Function Gaussian_PDF or Gaussian_Log_PDF should be used in this section
+    
+    
+    for i in range(0, label_num):
+        for j in range(0, data_point):
+            likelihood[j][i] = 1
+            for k in range(0, data.shape[1]):
+                likelihood[j][i] += Gaussian_Log_PDF(data[j][k], mu[i][k], sigma[i][k])
+                
+    
+    for i in range(0, label_num):
+        for j in range(0, data_point):
+            posterior[j][i] = (prior[i]) + likelihood[j][i]
+            
+        
     # end
     return posterior
 
