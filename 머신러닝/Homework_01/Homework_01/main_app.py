@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 
 import sys
-print(sys.path)
-sys.path.append('C:/Users/ytkim/Desktop')
+#print(sys.path)
+#sys.path.append('C:/Users/김영태/Desktop/4-1/머신러닝/Homework_01/Homework_01')
 import YTK as util
 
 """
