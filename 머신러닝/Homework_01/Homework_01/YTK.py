@@ -13,12 +13,14 @@ def feature_normalization(data): # 10 points
     std = np.zeros([feature_num])
     
     # your code here
-    mu = np.mean(data, axis=0)
-    std = np.std(data, axis=0)
+    mu = np.mean(data, axis=0)  #Find mean value in each feature
+    std = np.std(data, axis=0)  #Find variane value in each feature
     
-    #normal_feature = (data-np.min(data, axis=0))/(np.max(data, axis=0) - np.min(data, axis=0))
-    normal_feature = (data - mu) / std
-    
+        # Caculate normal_features
+    for i in range(0, data_point):
+        for j in range(0, feature_num):
+            normal_feature[i][j] = (data[i][j] - mu[j]) / std[j]
+
     # end
     
     return normal_feature
@@ -36,18 +38,17 @@ def get_normal_parameter(data, label, label_num): # 20 points
 
     # your code here
     
-        
+        # 3-dimensional data
     labeled_data = np.zeros([data.shape[0], label_num, feature_num])
     
     for i in range(0, data.shape[0]):
         for k in range(0, feature_num):
             _label = label[i]
-            labeled_data[i][_label][k] = data[i][k]
+            labeled_data[i][_label][k] = data[i][k] #data labeling
     
-    mu = np.mean(labeled_data, axis=0)
-    sigma = np.std(labeled_data, axis=0)
-    #print(mu)
-    #print(sigma)
+    mu = np.mean(labeled_data, axis=0)      # mean value in labeled data
+    sigma = np.std(labeled_data, axis=0)    # std value in labeld data
+    
     # end
     
     return mu, sigma
@@ -61,12 +62,12 @@ def get_prior_probability(label, label_num): # 10 points
     
     # your code here
     
-    for i in range(0, data_point):
+    for i in range(0, data_point):  # total data num (X num)
         idx = label[i]
-        prior[idx] += 1;
+        prior[idx] += 1;            # counting x in each class
     
-    prior = prior/data_point
-    #print(prior)
+    prior = prior/data_point        # probability in each class(status)
+    
 
     # end
     return prior
@@ -78,10 +79,10 @@ def Gaussian_PDF(x, mu, sigma): # 10 points
     
     # your code here
     
-    var = float(sigma)**2
-    denom = (2*np.pi*var)**.5
-    num = np.exp(-(float(x)-float(mu))**2/(2*var))
-    pdf = num/denom
+    var = float(sigma)**2       # variance
+    denom = (2*np.pi*var)**.5   # square root (2pi*variance)
+    num = np.exp(-(float(x)-float(mu))**2/(2*var)) # exponential
+    pdf = num/denom             # get pdf value
     # end
     
     return pdf
@@ -96,7 +97,7 @@ def Gaussian_Log_PDF(x, mu, sigma): # 10 points
     var = float(sigma)**2
     denom = (2*np.pi*var)**.5
     num = np.exp(-(float(x)-float(mu))**2/(2*var))
-    log_pdf = np.log(num/denom)
+    log_pdf = np.log(num/denom) # Log gaussian value
     # end
     
     return log_pdf
@@ -115,18 +116,19 @@ def Gaussian_NB(mu, sigma, prior, data): # 40 points
         ## Function Gaussian_PDF or Gaussian_Log_PDF should be used in this section
     
     
-    for i in range(0, label_num):
-        for j in range(0, data_point):
-            likelihood[j][i] = 1
-            for k in range(0, data.shape[1]):
+    for i in range(0, label_num):           # To find P(X|w1), P(X|w2), ... , P(X|wn) 
+        for j in range(0, data_point):      # To find P(X1|w) + P(X2|w) +...+ P(Xn|w) 
+            likelihood[j][i] = 0            # Set likelihood zero
+            for k in range(0, data.shape[1]):   # Add likelihood because of log function
                 likelihood[j][i] += Gaussian_Log_PDF(data[j][k], mu[i][k], sigma[i][k])
-                
+                # likelihood[j][i] :  P(X1|wi) + P(X2|wi) +...+ P(Xj|wi) 
+                # if Gaussian_PDF ? : P(X1|wi) * P(X2|wi) *...* P(Xj|wi) 
     
     for i in range(0, label_num):
         for j in range(0, data_point):
             posterior[j][i] = (prior[i]) + likelihood[j][i]
-            
-        
+            # posterior : P(wi|X) = P(wi) + P(X1|wi) + P(X2|wi) +...+ P(Xj|wi) 
+    
     # end
     return posterior
 
