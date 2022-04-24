@@ -1,4 +1,4 @@
-function Func = func(A, b)
+function Func = assign_2016722074(A, b)
 
 m = size(A, 1);
 
@@ -7,6 +7,8 @@ j_b = size(b, 2);
 
 
 % #1
+% Column-wise interchange in matrix
+% column 1 <-> column m
 temp = A(:,m);
 A(:,m) = A(:,1);
 A(:,1) = temp;
@@ -16,6 +18,7 @@ disp(A);
 
 
 % #2
+% Sort the odd row in ascending order
 for i=1:m
     if rem(i,2)==1
         A(i,:) = sort(A(i,:));
@@ -27,6 +30,7 @@ disp(A);
 
 
 % #3
+% Add one to all diagonal term
 for i=1:m
     for j=1:m
         if i==j
@@ -40,6 +44,8 @@ disp(A);
 
 
 % #4
+% Calculate inner product
+% B = A * A
 B = zeros([m,m]);
 for i=1:m
     for j=1:m
@@ -53,6 +59,7 @@ disp("Num 4) ");
 disp(B);
 
 % #5
+% vector u : m by 1
 u = zeros([m,1]);
 
 for i=1:m
@@ -64,6 +71,7 @@ disp(u);
 
 
 % #6
+% vector t = A * u
 t = zeros([m,1]);
 
 for i=1:m
@@ -79,6 +87,7 @@ disp(t);
 
 
 % #7
+% Concatenate t & u (m by 2) => matrix C
 C = zeros([m,2]);
 
 for i=1:m
@@ -91,6 +100,7 @@ disp(C);
 
 
 % #8
+% D = t * u
 D = zeros([m,m]);
 
 for i=1:m
@@ -104,6 +114,8 @@ disp(D);
 
 
 % #9
+% Create matrix E
+% element-wise power B & D
 E = zeros([m,m]);
 
 for i=1:m
