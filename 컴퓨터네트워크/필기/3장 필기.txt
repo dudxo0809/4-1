@@ -394,8 +394,8 @@ Caching example
 	edge router에서 origin까지 갔다오는 시간 : 2 sec
 
 	-> 1초에 10만 bit의 오브젝트를 15번 request를 보낸다
-		-> 1500000 bps (15만)
-	-> 기관네트워크는 10000000 bps 이므로 (100만)
+		-> 1500000 bps (150만)
+	-> 기관네트워크는 10000000 bps 이므로 (1000만)
 	-> LAN 안에서의 utilization은 15%가 된다
 	-> 반면 access link에서는 utilization이 100%가 된다.
 

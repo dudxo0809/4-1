@@ -1,4 +1,4 @@
-function Func = func(A, b)
+function Func = assign_2016722074(A, b)
 
 m = size(A, 1);
 
