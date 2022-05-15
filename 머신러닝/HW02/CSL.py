@@ -1,0 +1,169 @@
+# -*- coding: utf-8 -*-
+
+import copy
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import datasets
+from sklearn.cluster import KMeans
+# Libraries added without justification are a minus factor.
+    
+
+
+# Seed setting
+seed_num = 2022
+#np.random.seed(seed_num)
+iteration = 100     # Number of times to repeat steps E and M.
+
+
+class EM:
+    """ expectation-maximization algorithm, EM algorithm
+    The EM class is a class that implements an EM algorithm using GMM and kmeans.
+    
+    Within the fit function, the remaining functions should be used.
+    Other functions can be added, but all tasks must be implemented with Python built-in functions and Numpy functions.
+    You should annotate each function with a description of the function and parameters(Leave a comment).
+    """
+    
+    def __init__(self, n_clusters, iteration):
+        """
+        Parameters
+        ----------
+        n_clusters (int): Num of clusters (num of GMM)
+        iteration (int): Num of iteration 
+            Termination conditions if the model does not converge
+        mean (ndarray): Num of clusters x Num of features
+            The mean vector that each cluster has.
+        sigma (ndarray): Num of clusters x Num of features x Num of features     
+            The covariance matrix that each cluster has.
+        pi (ndarray): Num of labels (num of clusters)
+            z(x), Prior probability that each cluster has.
+        return None.
+        -------
+        None.
+
+        """
+        self.n_clusters = n_clusters   
+        self.iteration = iteration  
+        self.mean = np.zeros((3,4)) 
+        self.sigma = np.zeros((3,4,4)) 
+        self.pi = np.zeros((3))  
+        
+    def initialization(self, data): 
+        """ 
+        1.initialization, 10 points
+        Initial values for mean, sigma, and pi should be assigned.
+        It have a significant impact on performance.
+        
+        your comment here
+        """
+        # your code here
+        self.mean = np.mean(data, axis=0)
+         
+        self.sigma[0] = np.cov(np.array([data[0:50,0], data[0:50,1], data[0:50,2], data[0:50,3]]))
+        self.sigma[1] = np.cov(np.array([data[50:100,0], data[50:100,1], data[50:100,2], data[50:100,3]]))
+        self.sigma[2] = np.cov(np.array([data[100:150,0],data[100:150,1], data[100:150,2], data[100:150,3]]))
+        
+        self.pi = np.array([1/3,1/3,1/3])
+        
+        print(self.sigma)
+        return # something or nothing
+            
+    def multivariate_gaussian_distribution(self, yourparameterhere):
+        """ 2.multivariate_gaussian_distribution, 10 points
+        Use the linear algebraic functions of Numpy. π of this function is not self.pi
+        
+        your comment here
+        """
+        # your code here
+        return # something or nothing
+    
+    def expectation(self, yourparameterhere):
+        """ 3.expectation step, 20 points
+        The multivariate_gaussian_distribution(MVN) function must be used.
+        
+        your comment here
+        """
+        # your code here
+        return # something or nothing
+
+    def maximization(self, yourparameterhere): 
+        """ 4.maximization step, 20 points
+        Hint. np.outer
+        
+        your comment here
+        """
+        # your code here
+        return # something or nothing
+        
+    def fit(self, data):
+        """ 5.fit clustering, 20 points
+        Functions initialization, expectation, and maximization should be used by default.
+        Termination Condition. Iteration is finished or posterior is the same as before. (Beware of shallow copy)
+        Prediction for return should be formatted. Refer to iris['target'] format.
+        
+        your comment here
+        """
+        # your code here
+        self.initialization(data)
+        
+        
+       
+        prediction = np.zeros((3))# np array (150) as assigned by labels 0, 1, 2
+        return prediction 
+
+def plotting(data):
+    """ 6.plotting, 20 points with report
+    Default = seaborn pairplot
+    
+    your comment here
+    """
+    # your code here
+    sns.pairplot(data, hue="labels")
+    plt.show()
+    return # something or nothing
+    
+    
+if __name__ == '__main__':
+    # Loading and labeling data
+    iris = datasets.load_iris()
+    original_data = pd.DataFrame(data= np.c_[iris['data'], iris['target']], columns= iris['feature_names'] + ['labels'])
+    original_data['labels'] = original_data['labels'].map({0:'setosa', 1:'versicolor', 2:'virginica'})
+    plotting(original_data)
+    
+    # Only data is used W/O labels beacause EM and Kmeans are unsupervised learning
+    data = iris['data']
+    
+    # Unsupervised learning(clustering) using EM algorithm
+    EM_model = EM(n_clusters=3, iteration=iteration)
+    EM_pred = EM_model.fit(data)
+    EM_pd = pd.DataFrame(data= np.c_[data, EM_pred], columns= iris['feature_names'] + ['labels'])
+    plotting(original_data)
+    
+    # Why are these two elements almost the same? Write down the reason in your report. Additional 10 points
+    print(f'pi :            {EM_model.pi}')
+    print(f'count / total : {np.bincount(EM_pred) / 150}')
+    
+    # Unsupervised learning(clustering) using KMeans algorithm
+    KM_model = KMeans(n_clusters=3, init='random', random_state=seed_num, max_iter=iteration).fit(data)
+    KM_pred = KM_model.predict(data)
+    KM_pd = pd.DataFrame(data= np.c_[data, KM_pred], columns= iris['feature_names'] + ['labels'])
+    plotting(original_data)
+    
+    # No need to explain.
+    for idx in range(2):
+        EM_point = np.argmax(np.bincount(EM_pred[idx*50:(idx+1)*50]))
+        KM_point = np.argmax(np.bincount(KM_pred[idx*50:(idx+1)*50]))
+        EM_pred = np.where(EM_pred == idx, 3, EM_pred)
+        EM_pred = np.where(EM_pred == EM_point, idx, EM_pred)
+        EM_pred = np.where(EM_pred == 3, EM_point, EM_pred)
+        KM_pred = np.where(KM_pred == idx, 3, KM_pred)
+        KM_pred = np.where(KM_pred == KM_point, idx, KM_pred)
+        KM_pred = np.where(KM_pred == 3, KM_point, KM_pred)
+    
+    EM_hit = np.sum(iris['target']==EM_pred)
+    KM_hit = np.sum(iris['target']==KM_pred)
+    print(f'EM Accuracy: {round(EM_hit / 150,2)}    Hit: {EM_hit} / 150')
+    print(f'KM Accuracy: {round(KM_hit / 150,2)}    Hit: {KM_hit} / 150')
+    
