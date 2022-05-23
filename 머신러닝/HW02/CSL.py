@@ -67,7 +67,7 @@ class EM:
         
         self.pi = np.array([1/3,1/3,1/3])
         
-        print(self.sigma)
+        #print(self.sigma)
         return # something or nothing
             
     def multivariate_gaussian_distribution(self, yourparameterhere):
