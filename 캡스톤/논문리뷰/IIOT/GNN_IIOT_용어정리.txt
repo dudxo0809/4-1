@@ -1,0 +1,29 @@
+Laplacian 행렬 : 그래프의 차수행렬에서 인접행렬을 뺀 행렬
+https://junklee.tistory.com/112
+
+CNN 설명
+https://halfundecided.medium.com/%EB%94%A5%EB%9F%AC%EB%8B%9D-%EB%A8%B8%EC%8B%A0%EB%9F%AC%EB%8B%9D-cnn-convolutional-neural-networks-%EC%89%BD%EA%B2%8C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-836869f88375
+
+GCN = CNN을 그래프영역으로 확장
+
+GNN의 주요행렬 : 인접행렬, 특성행렬, 차수행렬..
+GCN두종류
+https://dbstndi6316.tistory.com/250
+스펙트럴GCN설명
+https://tootouch.github.io/research/spectral_gcn/
+스페이시얼GCN설명
+https://ralasun.github.io/deep%20learning/2021/02/15/gcn/
+
+임베딩
+정보를 기계가 이해할 수 있게 벡터정보로 바꾸는거 or 그 벡터
+======= http://www.secmem.org/blog/2019/08/17/gnn/  ----  레이어 거치는 개념!!
+
+오버스무딩 문제 - 지나친 획일화 Jump Knowledge Network구조
+https://ydy8989.github.io/2021-03-03-GAT/
+
+aggregation function 그래프데이터를 행렬로 변환하는 연산
+======= https://untitledtblog.tistory.com/152
+
+
+
+
