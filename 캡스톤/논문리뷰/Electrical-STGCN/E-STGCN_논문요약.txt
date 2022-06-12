@@ -1,0 +1,51 @@
+[[ 초록 ]]
+
+오늘 리뷰할 논문은 Electrical-STGCN_An_Electrical_Spatio-Temporal_Graph_Convolutional_Network_for_Intelligent_Predictive_Maintenance 이다.
+이번 논문은 IIOT분야의 이상탐지에 사용되어, 기기의 정비를 돕는 머신러닝 모델인 Electrical-STGCN를 다루고 있다.
+
+IIOT분야의 고장을 정비하는 세가지 방법이 있다.
+- 고장정비: 문제점이나 장애가 발생된 후에 수리합니다.
+- 예방정비: 경험에 기반하여 예정된 수리가 이루어집니다.
+- 예측정비: 자산에 대한 데이터가 장애가 임박했음을 표시하므로 수리가 이루어집니다.
+
+AI기술의 발달로인해 예측정비(PDM)에대한 관심이 커지고있다.
+
+RUL은 시스템의 남은 사용수명을 말하는데, PDM모델에서 RUL을 측정하는것은 중요하다.
+
+PDM모델에서 RUL을 측정하기위한 방법으로 지원벡터머신(SVM), K-평균, 앙상블학습(EL), 인공신경망(ANN)의 네가지 주요 알고리즘들이 있다.
+
+::::::::::PPT에 넣을것
+::::::::::SVM : 높은 정밀도로인해 분류 및 회귀작업에 쓰인다. 시간적 요소를 고려하기 어려운 구조다.
+::::::::::K-평균 : 성능이 우수하고 알고리즘을 이해하기 쉽다. 군집 수를 결정하기어렵고 데이터 입력 순서가 최종결과에 영향을준다.
+::::::::::EL 알고리즘 : 다양한 분류기들을 융합하여 더 나은 결과를 낸다. 계산하는데 시간이 많이 소요된다. 
+::::::::::ANN : 고차원 데이터 처리가 가능하다. 오버스무딩의 문제를 가진다. 
+
+장비의 작동은 전압,전류 등 전기적 속성과 밀접한 관계가 있다.
+
+또한 전기적 속성은 시간의 흐름에따라 계속 변한다.
+
+기존의 PDM모델은 공통적으로 이런 시간의 흐름을 고려하지않기때문에 성능이 떨어진다.
+
+이 논문은 이러한 시간에따른 전기적 속성의 변화를 고려하여 설계된 PDM 모델인 Electrical-STGCN을 제안한다.
+
+E-STGCN 알고리즘은 다음과 같은 과정을 거칩니다.
+
+1.    산업장비에 부착된 스마트 센서로 데이터 수집
+2.    데이터 시퀀스 X를 구조화된 그래프 데이터로 변환 (Gt)
+3.    Kernel func를 사용해 Asim과 Aφ1을 구함 (각각 인접행렬과의 유사도 행렬, 라플라시안 행렬의 고유값)
+4.    위 두 행렬과 Vt를 normalize함 (Vt는 노드(feature)의 정보)
+5.    컨볼루션 연산을 진행
+
+[사진]Remaining Useful Life
+
+6.    4의 과정을 통해 나온 결과를 a( temporal residual block)에 넣어 temporal dependency를 수행함
+7.    5의 결과를 b(HPN)에 넣어 RUL을 계산함
+8.    모델의 파라미터를 업데이트하고 수렴할 때까지 반복함
+
+v
+
+Electrical-STGCN_An_Electrical_Spatio-Temporal_Graph_Convolutional_Network_for_Intelligent_Predictive_Maintenance
+Electrical-STGCN
+An Electrical Spatio-Temporal
+Graph Convolutional Network
+For Intelligent Predictive Maintenance

@@ -1,128 +1,179 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun  5 13:59:54 2022
 
-@author: 김영태
-"""
+#path = 'C:/Users/ytkim/Desktop/4-1학기/머신러닝/과제/HW3/Multi-class Weather Dataset'
 path = 'C:/Users/김영태/Desktop/4-1/머신러닝/과제/HW3/archive/Multi-class Weather Dataset'
 
 
+
 import tensorflow as tf
-import numpy as np
+print(tf.__version__)
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+from sklearn.datasets import load_iris # 샘플 데이터 로딩
+from sklearn.model_selection import train_test_split
+
+
 import os
 import sys
 sys.path.append(path)
 
-import matplotlib.pyplot as plt
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.models import Sequential
-
-sys.path.append(path)
-
 folders = os.listdir(path)
 
-batch_size = 32
-img_height = 180
-img_width = 180
+from keras_preprocessing.image import ImageDataGenerator
+
+#import dataset
+
 data_dir = path
+dataset = data_dir
 
-train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-  data_dir,
-  validation_split=0.2,
-  subset="training",
-  seed=123,
-  image_size=(img_height, img_width),
-  batch_size=batch_size)
+# train dataset
 
-val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-  data_dir,
-  validation_split=0.2,
-  subset="validation",
-  seed=123,
-  image_size=(img_height, img_width),
-  batch_size=batch_size)
+train_datagen = ImageDataGenerator(rescale = 1.0/255.,
+                                   
+                                   rotation_range=90,
+                                   width_shift_range=0.2,
+                                   height_shift_range=0.2,
+                                   shear_range=0.2,
+                                   zoom_range=0.3,
+                                   
+                                   validation_split=0.2,
+                                   vertical_flip=True)
 
-class_names = train_ds.class_names
-print(class_names)
 
-plt.figure(figsize=(10, 10))
-for images, labels in train_ds.take(1):
-  for i in range(9):
-    ax = plt.subplot(3, 3, i + 1)
-    plt.imshow(images[i].numpy().astype("uint8"))
-    plt.title(class_names[labels[i]])
-    plt.axis("off")
+train_generator = train_datagen.flow_from_directory(dataset, 
+                                                    batch_size=16,
+                                                    shuffle=True,
+                                                    class_mode='categorical',
+                                                    subset='training',
+                                                    target_size=(150,150))
+
+# validation dataset
+
+valid_generator = train_datagen.flow_from_directory(dataset,
+                                                    batch_size = 16,
+                                                    shuffle=True,
+                                                    class_mode='categorical',
+                                                    subset='validation',
+                                                    target_size=(150,150))
     
-    
-for image_batch, labels_batch in train_ds:
-  print(image_batch.shape)
-  print(labels_batch.shape)
-  break
+# test dataset
 
-normalization_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)
+test_datagen = ImageDataGenerator(rescale = 1.0/255.)
 
-normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-image_batch, labels_batch = next(iter(normalized_ds))
-first_image = image_batch[0]
-# Notice the pixels values are now in `[0,1]`.
-print(np.min(first_image), np.max(first_image))
+test_generator = test_datagen.flow_from_directory(dataset,
+                                                    batch_size = 16,
+                                                    shuffle=True,
+                                                    target_size=(150,150))
 
 
-AUTOTUNE = tf.data.AUTOTUNE
+# AlexNet
 
-train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
-val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
-
-
-num_classes = 4
-
-model = tf.keras.Sequential([
-  tf.keras.layers.experimental.preprocessing.Rescaling(1./255),
-  tf.keras.layers.Conv2D(32, 3, activation='relu'),
-  tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Conv2D(32, 3, activation='relu'),
-  tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Conv2D(64, 3, activation='relu'),
-  tf.keras.layers.MaxPooling2D(),
-  tf.keras.layers.Flatten(),
-  tf.keras.layers.Dense(128, activation='relu'),
-  tf.keras.layers.Dense(num_classes)
+model=tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), activation='relu', input_shape=(150,150,3)),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPool2D(pool_size=(3,3), strides=(2,2)),
+    tf.keras.layers.Conv2D(filters=128, kernel_size=(5,5), strides=(1,1), activation='relu', padding="same"),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPool2D(pool_size=(3,3), strides=(2,2)),
+    tf.keras.layers.Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding="same"),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(filters=256, kernel_size=(1,1), strides=(1,1), activation='relu', padding="same"),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2D(filters=128, kernel_size=(1,1), strides=(1,1), activation='relu', padding="same"),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPool2D(pool_size=(3,3), strides=(2,2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(1024,activation='relu'),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(1024,activation='relu'),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(4,activation='softmax')  
 ])
 
-model.compile(
-  optimizer='adam',
-  loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-  metrics=['accuracy'])
 
-epochs=50
-history = model.fit(
-  train_ds,
-  validation_data=val_ds,
-  epochs=epochs
-)
+# Model build
 
-acc = history.history['accuracy']
+model.compile(optimizer = 'Adam', loss= tf.keras.losses.CategoricalCrossentropy() ,metrics=['accuracy'])
+#model.summary()
+
+
+# Train Model
+
+history = model.fit(train_generator, validation_data = valid_generator,
+                    epochs=30
+                    ) 
+
+
+# Import plt
+import matplotlib.pyplot as plt
+
+
+# Print Accuracy & Loss
+
+train_acc = history.history['accuracy']
+train_loss = history.history['loss']
 val_acc = history.history['val_accuracy']
+val_loss = history.history['val_loss']
 
-loss=history.history['loss']
-val_loss=history.history['val_loss']
+plt.figure(figsize=(12, 6))
 
-epochs_range = range(epochs)
+plt.subplot(1, 2, 1) # jumlah row, jumlah column, column/row berapa
+plt.plot(train_acc, label='Training')
+plt.plot(val_acc, label='Validation')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
 
-plt.figure(figsize=(8, 8))
-plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Training Accuracy')
-plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-plt.legend(loc='lower right')
-plt.title('Training and Validation Accuracy')
+plt.subplot(1, 2, 2) # jumlah row, jumlah column, column/row berapa
+plt.plot(train_loss, label='Training')
+plt.plot(val_loss, label='Validation')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
 
-plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Training Loss')
-plt.plot(epochs_range, val_loss, label='Validation Loss')
-plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
+
+# Print plot
 plt.show()
+
+
+# import module confusion matrix & classification_report
+
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, classification_report
+new_model = model
+
+# Model Prediction
+probabilities = new_model.predict(valid_generator)
+
+
+# Get Prediction value
+predictions = []
+for prob in probabilities:
+   best_index = np.argmax(prob)
+   predictions.append(best_index)
+
+
+labels = valid_generator.classes
+# tn,fp,fn,tp = confusion_matrix(labels, predictions).ravel()
+cm = confusion_matrix(labels, predictions).ravel()
+#cm = [[tp, fp],
+#      [fn, tn]]
+
+cr = classification_report(labels, predictions)
+print(cm)   # confusion matrix
+print(cr)   # classification report
+
+
+# Evaluate model
+loss, accuracy = model.evaluate(test_generator)
+
+
+# Print Loss & Accuracy
+print('Loss = {:.5f}'.format(loss))
+print('Accuracy = {:.5f}'.format(accuracy))
+
+
+
 
 
 
