@@ -1,6 +1,6 @@
 import sys
 sys.path.append('C:/Users/김영태/Desktop/4-1/캡스톤/STGCN/STGCN-Tf2-main')
-dataset_path = 'C:/Users/김영태/Desktop/4-1/캡스톤/STGCN/STGCN-Tf2-main/dataset'
+path = 'C:/Users/김영태/Desktop/4-1/캡스톤/STGCN/STGCN-Tf2-main'
 
 import numpy as np
 import pandas as pd
@@ -24,21 +24,23 @@ else:
         
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-'''
+dataset_path = pjoin(path, 'dataset')
+
+
 v_file = f'PeMSD7_V_228.csv'
 w_file = f'PeMSD7_W_228.csv'
-'''
 
+'''
 v_file = f'train1.csv'
 w_file = f'w1.csv'
-
+'''
 file_path = pjoin(dataset_path, v_file)
 n_feature = (pd.read_csv(file_path, header=None)).shape[1]
 
 print(f"This data has {n_feature} features !!")
 
 epochs = 30
-n_route = v.shape[1]
+n_route = n_feature
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n_route', type=int, default= n_route)
@@ -55,17 +57,23 @@ parser.add_argument('--datafile', type=str, default=v_file)
 parser.add_argument('--graph', type=str, default= w_file)
 parser.add_argument('--scale_graph', action='store_true', default=False)
 parser.add_argument('--channels', type=int, default=1)
-parser.add_argument('--logs', type=str, default="output/")
+parser.add_argument('--logs', type=str, default= os.path.join(path, 'output').replace("\\", "/"))
 
 args = parser.parse_args()
 print(f'Training configs: {args}')
 
 current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-args.logs = pjoin(args.logs, current_time)
-args.model_path = pjoin(args.logs, 'model')
-args.logs = pjoin(args.logs, 'logs')
+args.logs = os.path.join(args.logs, current_time)
+
+args.model_path = os.path.join(args.logs, 'model').replace("\\", "/")
+args.logs = os.path.join(args.logs, 'logs').replace("\\", "/")
+
+#args.model_path = pjoin(args.model_path)
+
 os.makedirs(args.model_path, exist_ok=True)
 os.makedirs(args.logs, exist_ok=True)
+print(args.model_path)
+print(args.logs)
 n, n_his, n_pred = args.n_route, args.n_his, args.n_pred
 Ks, Kt = args.ks, args.kt
 # blocks: settings of channel size in st_conv_blocks / bottleneck design

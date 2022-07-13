@@ -2,15 +2,7 @@ from utils.math_utils import z_score
 import numpy as np
 import pandas as pd
 
-# Visualization
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
-import plotly.graph_objects as go
 
-#warning
-import warnings
-warnings.filterwarnings('ignore')
 
 class Dataset(object):
     def __init__(self, data, stats):

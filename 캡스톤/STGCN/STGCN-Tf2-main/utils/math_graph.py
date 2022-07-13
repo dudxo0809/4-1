@@ -3,15 +3,8 @@ import pandas as pd
 from scipy.sparse.linalg import eigs
 from scipy.sparse.csgraph import laplacian
 
-# Visualization
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
-import plotly.graph_objects as go
-
-#warning
-import warnings
-warnings.filterwarnings('ignore')
+import dtw
+from dtaidistance import dtw
 
 def scaled_laplacian(W):
     '''
@@ -96,7 +89,7 @@ def weight_matrix(file_path, sigma2=0.1, epsilon=0.5, scaling=True):
     
     return W
 
-def weight_matrix_by_correlation(file_path, sigma2=0.1, epsilon=0.5, scaling=True):
+def weight_matrix_by_correlation(file_path, sigma2=0.1, epsilon=0.5, scaling=True, isDTW=True):
     '''
     Read V file and make correlation matrix
     -> use this matrix to weighted adjacency matrix
@@ -108,8 +101,11 @@ def weight_matrix_by_correlation(file_path, sigma2=0.1, epsilon=0.5, scaling=Tru
         
     except FileNotFoundError:
         print(f'ERROR: input file was not found in {file_path}.')
-
-    corr = np.corrcoef(V_trans)
+    
+    if isDTW==false:
+        corr = np.corrcoef(V_trans)
+    else:
+        corr = dtw.distance_matrix_fast(corr)
     corr = np.round(corr, 5)
     corr = corr.clip(0)
     print(corr)
